@@ -42,7 +42,7 @@ public class WebTest {
             assertThat(state.get("slots").get(0).get("position").asInt(), is(1));
             assertThat(state.get("slots").get(0).get("drink").asText(), is("COLA"));
             assertThat(state.get("slots").get(0).get("name").asText(), is("Cola"));
-            assertThat(state.get("slots").get(0).get("price").isNull(), is(true));
+            assertThat(state.get("slots").get(0).has("price"), is(true));
             assertThat(state.get("slots").get(0).get("stock").asInt(), is(5));
             assertThat(state.get("outputTray").size(), is(0));
             assertThat(state.get("coinReturn").size(), is(0));
