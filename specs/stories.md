@@ -18,6 +18,7 @@ möchte ich sehen, was mein Getränk kostet,
 damit ich entscheiden kann, ob ich es mir leisten will.
 
 - An jedem Fach steht der Preis hinter dem Namen, z. B. „Cola 1,00 €".
+- Alle Getränke kosten 1,00 €.
 
 ## 3 Guthaben anzeigen
 
