@@ -1,7 +1,7 @@
 package de.sharpsharp.vendingmachine.smoke;
 
 import de.sharpsharp.vendingmachine.Main;
-import de.sharpsharp.vendingmachine.adapter.in.web.WebAdapter;
+import de.sharpsharp.vendingmachine.VendingMachine;
 import io.cucumber.java.After;
 import io.cucumber.java.AfterAll;
 import io.cucumber.java.Before;
@@ -9,6 +9,7 @@ import io.cucumber.java.Scenario;
 import io.cucumber.java.de.Angenommen;
 import io.cucumber.java.de.Dann;
 import io.cucumber.java.de.Wenn;
+import io.javalin.Javalin;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -18,7 +19,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 /**
  * Step definitions of the browser smoke test.
  * <p>
- * Nothing is replaced: the machine is wired exactly as in production ({@link Main#start}),
+ * Nothing is replaced: the machine sits in its web server exactly as in production ({@link Main#web}),
  * a real Chrome loads its page and clicks like a customer. The steps speak the language of
  * the page – coins, slots, trays; the {@link MachinePage} knows the HTML behind it.
  * <p>
@@ -28,7 +29,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
  */
 public class WebSmokeSteps {
 
-    private static WebAdapter housing;
+    private static Javalin web;
     private static String url;
 
     private WebDriver browser;
@@ -37,9 +38,9 @@ public class WebSmokeSteps {
     /** Starts the machine with the first browser scenario; @BeforeAll cannot be bound to a tag. */
     @Before("@browser")
     public void startTheMachineAndTheBrowser() {
-        if (housing == null) {
-            housing = Main.start(0);
-            url = "http://localhost:" + housing.port() + "/";
+        if (web == null) {
+            web = Main.web(new VendingMachine()).start(0);
+            url = "http://localhost:" + web.port() + "/";
         }
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--window-size=1000,900");
@@ -66,8 +67,8 @@ public class WebSmokeSteps {
 
     @AfterAll
     public static void stopTheMachine() {
-        if (housing != null) {
-            housing.stop();
+        if (web != null) {
+            web.stop();
         }
     }
 

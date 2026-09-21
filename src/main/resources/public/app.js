@@ -2,8 +2,8 @@
 // Every action returns the new state, so the page re-renders everything from it.
 'use strict';
 
-const REFUSALS = new Set(['SOLD_OUT', 'NOT_ENOUGH_MONEY', 'NO_CHANGE', 'EMPTY_OUTPUT_TRAY', 'NO_BEER_BEFORE_FOUR', 'MALFUNCTION']);
-const SPOKEN_ALOUD = new Set(['NO_BEER_BEFORE_FOUR']);
+// The state comes as plain numbers and names: amounts in cents, drinks by name. Formatting happens here.
+const SPOKEN_ALOUD = new Set(['Kein Bier vor 4']);
 
 const slotsEl = document.getElementById('slots');
 const displayEl = document.getElementById('display');
@@ -32,10 +32,10 @@ async function act(path) {
     }
     const state = await response.json();
     render(state);
-    if (REFUSALS.has(state.messageCode)) {
+    if (state.refused) {
       flashDisplay();
     }
-    if (SPOKEN_ALOUD.has(state.messageCode)) {
+    if (SPOKEN_ALOUD.has(state.message)) {
       speak(state.message);
     }
   } catch (error) {
@@ -47,7 +47,7 @@ async function act(path) {
 
 function render(state) {
   displayEl.classList.remove('display--offline');
-  creditEl.textContent = `Guthaben ${state.credit}`;
+  creditEl.textContent = `Guthaben ${euro(state.credit)}`;
   messageEl.textContent = state.message;
   renderSlots(state.slots);
   renderOutputTray(state.outputTray);
@@ -62,7 +62,7 @@ function renderSlots(slots) {
     button.className = slot.stock === 0 ? 'slot slot--sold-out' : 'slot';
     button.dataset.drink = slot.drink;
     button.dataset.position = slot.position;
-    button.setAttribute('aria-label', `Fach ${slot.position}: ${slot.name} wählen, ${slot.price}, ${slot.stock} Dosen`);
+    button.setAttribute('aria-label', `Fach ${slot.position}: ${slot.name} wählen, ${euro(slot.price)}, ${slot.stock} Dosen`);
 
     const number = document.createElement('span');
     number.className = 'slot-number';
@@ -80,7 +80,7 @@ function renderSlots(slots) {
 
     const price = document.createElement('span');
     price.className = 'slot-price';
-    price.textContent = slot.price;
+    price.textContent = euro(slot.price);
 
     button.append(number, name, cans, price);
     return button;
@@ -103,10 +103,10 @@ function renderOutputTray(cans) {
 }
 
 function renderCoinReturn(coins) {
-  coinReturnEl.replaceChildren(...coins.map(coin => {
+  coinReturnEl.replaceChildren(...coins.map(cents => {
     const chip = document.createElement('span');
-    chip.className = `chip ${coinClass(coin.coin)}`;
-    chip.textContent = coin.label;
+    chip.className = `chip coin--${cents}`;
+    chip.textContent = coinLabel(cents);
     return chip;
   }));
   if (coins.length > 0) {
@@ -127,13 +127,14 @@ function canImage(drink) {
   return svg;
 }
 
-function coinClass(coin) {
-  switch (coin) {
-    case 'FIFTY_CENT': return 'coin--50';
-    case 'ONE_EURO': return 'coin--100';
-    case 'TWO_EURO': return 'coin--200';
-    default: return '';
-  }
+/** 150 -> "1,50 €" */
+function euro(cents) {
+  return `${Math.floor(cents / 100)},${String(cents % 100).padStart(2, '0')} €`;
+}
+
+/** What is printed on a coin: 50 -> "50 ct", 200 -> "2 €" */
+function coinLabel(cents) {
+  return cents % 100 === 0 ? `${cents / 100} €` : `${cents} ct`;
 }
 
 function hint(text) {

@@ -31,7 +31,7 @@ jobs:
           path: target/getraenkeautomat.jar
           retention-days: 7
 
-  # Alles außer dem Rauchtest: Szenarien am Port, Unit-Tests, Web-Adapter, Architektur.
+  # Alles außer dem Rauchtest: die Szenarien und der HTTP-Test.
   # Läuft in Sekunden und braucht keinen Browser.
   test:
     name: test (alles außer Rauchtest)
