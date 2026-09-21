@@ -16,8 +16,11 @@ public class VendingMachine {
     public static final int CANS_PER_SLOT = 5;
 
     private final Map<Drink, Integer> stock = new EnumMap<>(Drink.class);
+    /** The time of day, for rules that depend on it. Never read the system time directly: ask the clock. */
+    private final Clock clock;
 
-    public VendingMachine() {
+    public VendingMachine(Clock clock) {
+        this.clock = clock;
         for (Drink drink : Drink.values()) {
             stock.put(drink, CANS_PER_SLOT);
         }

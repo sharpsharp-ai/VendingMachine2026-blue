@@ -1,5 +1,6 @@
 package de.sharpsharp.vendingmachine.smoke;
 
+import java.time.LocalTime;
 import de.sharpsharp.vendingmachine.Main;
 import de.sharpsharp.vendingmachine.VendingMachine;
 import io.cucumber.java.After;
@@ -39,7 +40,7 @@ public class WebSmokeSteps {
     @Before("@browser")
     public void startTheMachineAndTheBrowser() {
         if (web == null) {
-            web = Main.web(new VendingMachine()).start(0);
+            web = Main.web(new VendingMachine(LocalTime::now)).start(0);
             url = "http://localhost:" + web.port() + "/";
         }
         ChromeOptions options = new ChromeOptions();

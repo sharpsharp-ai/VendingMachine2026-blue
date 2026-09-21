@@ -7,6 +7,8 @@ import io.javalin.testtools.JavalinTest;
 import io.javalin.testtools.Response;
 import org.junit.Test;
 
+import java.time.LocalTime;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -16,7 +18,7 @@ public class WebTest {
 
     private static final ObjectMapper JSON = new ObjectMapper();
 
-    private final Javalin web = Main.web(new VendingMachine());
+    private final Javalin web = Main.web(new VendingMachine(LocalTime::now));
 
     @Test
     public void servesTheStartPage() {

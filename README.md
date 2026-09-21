@@ -35,6 +35,7 @@ Drei Klassen in `src/main/java`:
 |---|---|
 | `VendingMachine` | ignoriert jede Aktion und meldet immer den Zustand nach dem Einschalten. Hier entstehen die Regeln |
 | `Drink` | die vier Fächer mit Namen, in ihrer Reihenfolge auf der Front; Preise kommen mit Story 2 |
+| `Clock` | die Uhr des Automaten, eine Methode `now()`; `Main` gibt die Systemzeit, die Tests eine `FakeClock`, die sie stellen |
 | `Main` | startet Javalin, liefert die Seite aus und übersetzt zwischen HTTP, JSON und dem Automaten |
 
 Beträge sind `int` in Cent, Meldungen sind Strings. Die Seite (`src/main/resources/public/`) formatiert

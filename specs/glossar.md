@@ -24,6 +24,7 @@ die Schrittdefinitionen rufen die Methode in der letzten Spalte.
 | Ausgabefach | output tray | wo die gefallenen Dosen liegen, bis man sie entnimmt | `outputTray()`, `takeDrinks()` |
 | Münzrückgabe | coin return | wo ausgezahlte Münzen liegen, bis man sie entnimmt | `coinReturn()`, `takeCoins()` |
 | Kasse | cash box | die Münzen im Automaten | |
+| Uhrzeit | clock | die Uhr des Automaten; `Main` gibt die Systemzeit, die Schritte eine `FakeClock` | `Clock`, im Test `clock.set(LocalTime.of(15, 59))` |
 
 ## Parameter in Schritten
 

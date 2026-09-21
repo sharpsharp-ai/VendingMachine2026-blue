@@ -15,7 +15,8 @@ import static org.hamcrest.Matchers.is;
  */
 public class VendingMachineSteps {
 
-    private final VendingMachine machine = new VendingMachine();
+    private final FakeClock clock = new FakeClock();
+    private final VendingMachine machine = new VendingMachine(clock);
 
     @Angenommen("der Automat ist frisch gestartet")
     public void theMachineIsFreshlyStarted() {

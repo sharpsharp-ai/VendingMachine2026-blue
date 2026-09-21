@@ -4,6 +4,7 @@ import io.javalin.Javalin;
 import io.javalin.http.Context;
 import io.javalin.http.staticfiles.Location;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public final class Main {
 
     public static void main(String[] args) {
         int port = Integer.parseInt(System.getenv().getOrDefault("PORT", String.valueOf(DEFAULT_PORT)));
-        Javalin web = web(new VendingMachine()).start(port);
+        Javalin web = web(new VendingMachine(LocalTime::now)).start(port);
         System.out.println("Getränkeautomat läuft auf http://localhost:" + web.port());
     }
 
