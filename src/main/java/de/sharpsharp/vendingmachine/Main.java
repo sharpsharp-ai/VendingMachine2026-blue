@@ -80,8 +80,11 @@ public final class Main {
 
     // ---- The state as the page receives it ------------------------------------
 
-    /** @param position the slot number as printed on the front, counting from 1 */
-    public record Slot(int position, String drink, String name, int price, int stock) {
+    /**
+     * @param position the slot number as printed on the front, counting from 1
+     * @param price    in cents, null while the machine knows no price
+     */
+    public record Slot(int position, String drink, String name, Integer price, int stock) {
     }
 
     public record Can(String drink, String name) {
@@ -101,7 +104,7 @@ public final class Main {
     static State state(VendingMachine machine) {
         List<Slot> slots = new ArrayList<>();
         for (Drink drink : Drink.values()) {
-            slots.add(new Slot(drink.ordinal() + 1, drink.name(), drink.displayName(), drink.price(), machine.stock(drink)));
+            slots.add(new Slot(drink.ordinal() + 1, drink.name(), drink.displayName(), machine.price(drink), machine.stock(drink)));
         }
         List<Can> outputTray = new ArrayList<>();
         for (Drink drink : machine.outputTray()) {

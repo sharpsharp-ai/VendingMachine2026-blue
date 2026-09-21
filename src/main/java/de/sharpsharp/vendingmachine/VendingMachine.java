@@ -64,6 +64,11 @@ public class VendingMachine {
         return stock.get(drink);
     }
 
+    /** The price shown behind the name of the drink, in cents. Null: the machine knows no price yet. */
+    public synchronized Integer price(Drink drink) {
+        return null;
+    }
+
     /** The cans that dropped out and have not been taken yet. */
     public synchronized List<Drink> outputTray() {
         return List.of();

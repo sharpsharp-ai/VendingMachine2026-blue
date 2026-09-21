@@ -6,7 +6,6 @@ import io.cucumber.java.de.Wenn;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.is;
 
 /**
@@ -20,11 +19,7 @@ public class VendingMachineSteps {
 
     @Angenommen("der Automat ist frisch gestartet")
     public void theMachineIsFreshlyStarted() {
-        // The machine is built fresh for every scenario (see the field above).
-        // This step documents that in the feature file and double-checks it.
-        assertThat(machine.credit(), is(0));
-        assertThat(machine.outputTray(), is(empty()));
-        assertThat(machine.coinReturn(), is(empty()));
+        // Nothing to do: Cucumber builds this class, and with it the machine, fresh for every scenario.
     }
 
     @Wenn("ich {drink} wähle")

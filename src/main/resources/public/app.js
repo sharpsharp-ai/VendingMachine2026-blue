@@ -62,7 +62,8 @@ function renderSlots(slots) {
     button.className = slot.stock === 0 ? 'slot slot--sold-out' : 'slot';
     button.dataset.drink = slot.drink;
     button.dataset.position = slot.position;
-    button.setAttribute('aria-label', `Fach ${slot.position}: ${slot.name} wählen, ${euro(slot.price)}, ${slot.stock} Dosen`);
+    const priceText = slot.price == null ? '' : `, ${euro(slot.price)}`;
+    button.setAttribute('aria-label', `Fach ${slot.position}: ${slot.name} wählen${priceText}, ${slot.stock} Dosen`);
 
     const number = document.createElement('span');
     number.className = 'slot-number';
@@ -78,11 +79,14 @@ function renderSlots(slots) {
       cans.append(canImage(slot.drink));
     }
 
-    const price = document.createElement('span');
-    price.className = 'slot-price';
-    price.textContent = euro(slot.price);
-
-    button.append(number, name, cans, price);
+    button.append(number, name, cans);
+    // The price appears only once the machine knows one.
+    if (slot.price != null) {
+      const price = document.createElement('span');
+      price.className = 'slot-price';
+      price.textContent = euro(slot.price);
+      button.append(price);
+    }
     return button;
   }));
 }
