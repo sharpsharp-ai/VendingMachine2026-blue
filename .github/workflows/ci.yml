@@ -31,7 +31,7 @@ jobs:
           path: target/getraenkeautomat.jar
           retention-days: 7
 
-  # Alles außer dem Rauchtest: die Szenarien und der HTTP-Test.
+  # mvn verify: Szenarien, Unit-Tests, HTTP-Test und alle Gates. Der Rauchtest ist davon ausgenommen.
   # Läuft in Sekunden und braucht keinen Browser.
   test:
     name: test (alles außer Rauchtest)
@@ -44,7 +44,7 @@ jobs:
           java-version: '17'
           cache: maven
       - name: Alle Tests außer dem Rauchtest, mit JaCoCo
-        run: mvn --batch-mode --no-transfer-progress verify -Dtest='!RunSmokeTest'
+        run: mvn --batch-mode --no-transfer-progress verify
       - name: Testergebnisse als Check am Commit
         if: always()
         uses: mikepenz/action-junit-report@v6

@@ -2,16 +2,19 @@
 
 Startstand für das Training. Die Seite ist fertig, der Automat dahinter tut noch nichts: Jeder Klick
 kommt an, ändert aber nichts. Genau ein Szenario ist rot, „Freies Getränk". Alles Weitere entsteht
-testgetrieben. Code auf Englisch, Fachsprache, Oberfläche und Szenarien auf Deutsch.
+Story für Story, testgetrieben; die Stories stehen in `specs/stories.md`.
+Code auf Englisch, Fachsprache, Oberfläche und Szenarien auf Deutsch.
+
+Fertig ist eine Änderung, wenn `mvn -q verify` ohne Ausgabe und mit Exit-Code 0 endet.
 
 ## Starten
 
-Voraussetzung: JDK 17 oder neuer, Maven, Chrome für den Rauchtest.
+Voraussetzung: JDK 17 oder neuer und Maven. Chrome nur für den Rauchtest.
 
 ```bash
-mvn test                       # alle Tests: Cucumber-Szenarien, HTTP-Test, Rauchtest im Browser
+mvn -q verify                  # alle Tests und alle Gates; keine Ausgabe heißt grün
+mvn test -Dtest=RunSmokeTest   # der Rauchtest im Browser, braucht Chrome; läuft nicht in mvn verify
 mvn compile exec:java          # Automat starten, dann http://localhost:7070 öffnen
-mvn verify                     # Tests plus Coverage-Bericht in target/site/jacoco/index.html
 mvn package                    # Fat-Jar bauen …
 java -jar target/getraenkeautomat.jar   # … und starten (PORT=8080 wählt einen anderen Port)
 ```
@@ -31,41 +34,40 @@ Drei Klassen in `src/main/java`:
 | Klasse | Was sie tut |
 |---|---|
 | `VendingMachine` | ignoriert jede Aktion und meldet immer den Zustand nach dem Einschalten. Hier entstehen die Regeln |
-| `Drink` | die vier Fächer mit Name und Preis, in ihrer Reihenfolge auf der Front |
+| `Drink` | die vier Fächer mit Namen, in ihrer Reihenfolge auf der Front; Preise kommen mit Story 2 |
 | `Main` | startet Javalin, liefert die Seite aus und übersetzt zwischen HTTP, JSON und dem Automaten |
 
 Beträge sind `int` in Cent, Meldungen sind Strings. Die Seite (`src/main/resources/public/`) formatiert
-selbst und zeigt so viele Fächer, wie der Zustand liefert.
+selbst, zeigt so viele Fächer, wie der Zustand liefert, einen Preis nur, wenn der Automat einen kennt,
+und blinkt rot, wenn `refused` gesetzt ist.
 
 `src/test/resources/features/freies_getraenk.feature` ist das erste Szenario und rot: Wer ein Fach wählt,
-bekommt die Dose. Die Pipeline ist rot, bis es grün ist. Weitere Szenarien gibt es nicht; die Fachregeln
-unten sagen, was der Automat einmal können soll.
+bekommt die Dose. `mvn -q verify` und die Pipeline sind rot, bis es grün ist. Weitere Szenarien gibt es nicht.
 
-## Fachregeln
+## Stories und Specs
 
-| Regel |
-|---|
-| Start: vier volle Fächer (Cola 1 €, Orange 1 €, Zitrone 1 €, Bier 2 €, je 5 Dosen), Kasse mit 5 Stück jeder Münze (50 ct, 1 €, 2 €) |
-| Kauf: Münzen wandern sofort in die Kasse und werden Guthaben; reicht es, fällt die Dose, der Preis wird abgezogen, der Rest bleibt Guthaben |
-| „Ausverkauft", wenn das Fach leer ist |
-| „Zu wenig Geld", wenn das Guthaben nicht reicht |
-| „Kein Wechselgeld – bitte passend zahlen", wenn das Restguthaben nach dem Kauf nicht aus der Kasse auszahlbar wäre |
-| „Bitte Ausgabefach leeren" ab 3 Dosen im Fach; nach dem Leeren erscheint die vorherige Meldung wieder |
-| „Kein Bier vor 4": Bier erst ab 16:00 Uhr |
-| „Störung – Service: 0800 123 456": bleibt eine Dose stecken, wird der Preis nicht abgezogen, die Dose gilt als verbraucht. Die simulierte Mechanik lässt jede 7. Dose stecken |
-| Abbruch zahlt das ganze Guthaben aus der Kasse aus, mit den Münzen, die sie hat; Ausgabefach und Münzrückgabe werden per Klick geleert |
+| Wo | Was |
+|---|---|
+| `specs/stories.md` | die elf Stories mit Akzeptanzkriterien, in Reihenfolge |
+| `specs/glossar.md` | Fachbegriffe und alle vorhandenen Schritte; erzeugt von `scripts/steps-glossar.sh`, nach jedem neuen Schritt neu laufen lassen |
+| `specs/<nr>-<name>/spec.md` | je Story eine halbe Seite: Story, Regeln, offene Fragen |
+| `src/test/resources/features/<name>.feature` | je Story die Szenarien; sie sind die Taskliste |
 
-Bei jeder Ablehnung bleibt das Guthaben eingeworfen, und die Seite blinkt rot, wenn `refused` gesetzt ist.
+## Tests und Gates
 
-## Tests
+`mvn -q verify` lässt alles laufen und bricht beim ersten Verstoß ab:
 
-| Ebene | Werkzeug | Wo |
+| Gate | Werkzeug | Wo |
 |---|---|---|
 | Akzeptanz: Szenarien direkt gegen `VendingMachine` | Cucumber, JUnit-4-Runner | `VendingMachineSteps`, `features/` |
+| Unit-Tests | JUnit 4, Hamcrest, Mockito | `src/test/java` |
 | HTTP: echter Javalin auf freiem Port, das JSON, das die Seite bekommt | Javalin Testtools | `WebTest` |
-| Rauchtest: echter Chrome lädt die Seite, Automat verdrahtet wie in Produktion | Cucumber, Selenium | `smoke/` |
+| Rauchtest: echter Chrome lädt die Seite; nur per `-Dtest=RunSmokeTest`, nicht in `mvn verify` | Cucumber, Selenium | `smoke/` |
+| Architektur: nur `Main` kennt Javalin und JSON, niemand hängt von `Main` ab | ArchUnit | `ArchitekturTest` |
+| Stil: Methoden höchstens 20 Zeilen, Dateien höchstens 200, Komplexität höchstens 6 | Checkstyle | `config/checkstyle.xml` |
+| Abdeckung: mindestens 80 % der Zeilen außerhalb von `Main` laufen in Tests | JaCoCo | `pom.xml`, Bericht in `target/site/jacoco/` |
 
-Vorgehen pro Fachregel: Szenario schreiben, Unit-Test, Code, Refactoring, Commit.
+Vorgehen pro Story: Spec, Szenarien, dann je Szenario roter Test, Code, Refactoring, Commit.
 
 ## Rauchtest im Browser (Selenium)
 
@@ -74,7 +76,7 @@ Das Page Object `MachinePage` wartet auf den erwarteten Zustand, alle halbe Seku
 höchstens 10 Sekunden.
 
 ```bash
-mvn test -Dtest=RunSmokeTest                       # kopflos, wie in „mvn test"
+mvn test -Dtest=RunSmokeTest                       # kopflos
 mvn test -Dtest=RunSmokeTest -Dsmoke.headed=true   # Browser sichtbar
 ```
 
