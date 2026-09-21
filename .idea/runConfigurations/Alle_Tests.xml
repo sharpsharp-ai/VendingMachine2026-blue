@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Alle Tests" type="JUnit" factoryName="JUnit">
+    <module name="getraenkeautomat" />
+    <option name="PACKAGE_NAME" value="de.sharpsharp.vendingmachine" />
+    <option name="MAIN_CLASS_NAME" value="" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="package" />
+    <option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />
+    <envs>
+      <env name="SE_SKIP_DRIVER_IN_PATH" value="true" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

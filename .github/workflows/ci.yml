@@ -1,0 +1,90 @@
+# Bauen, schnelle Tests, Rauchtest im Browser – drei Jobs, parallel.
+# GitHub Actions, Maven und JDK 17. Testergebnisse erscheinen als Checks am Commit, Berichte als Artefakte.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Fat-Jar packen, ohne Tests
+        run: mvn --batch-mode --no-transfer-progress -DskipTests package
+      - uses: actions/upload-artifact@v7
+        with:
+          name: getraenkeautomat.jar
+          path: target/getraenkeautomat.jar
+          retention-days: 7
+
+  # Alles außer dem Rauchtest: Szenarien am Port, Unit-Tests, Web-Adapter, Architektur.
+  # Läuft in Sekunden und braucht keinen Browser.
+  test:
+    name: test (alles außer Rauchtest)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Alle Tests außer dem Rauchtest, mit JaCoCo
+        run: mvn --batch-mode --no-transfer-progress verify -Dtest='!RunSmokeTest'
+      - name: Testergebnisse als Check am Commit
+        if: always()
+        uses: mikepenz/action-junit-report@v6
+        with:
+          report_paths: target/surefire-reports/TEST-*.xml
+          check_name: Testergebnisse (test)
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: berichte-test
+          path: |
+            target/site/jacoco
+            target/cucumber-report.html
+          retention-days: 7
+
+  # Nur der Rauchtest: ein Szenario in einem echten, kopflosen Chrome.
+  # Chrome ist auf den GitHub-Runnern vorinstalliert; den passenden chromedriver holt Selenium Manager.
+  rauchtest:
+    name: rauchtest (Chrome)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Welcher Chrome ist da
+        run: google-chrome --version
+      - name: Nur der Rauchtest, kopflos
+        run: mvn --batch-mode --no-transfer-progress test -Dtest=RunSmokeTest
+      - name: Testergebnisse als Check am Commit
+        if: always()
+        uses: mikepenz/action-junit-report@v6
+        with:
+          report_paths: target/surefire-reports/TEST-*.xml
+          check_name: Testergebnisse (rauchtest)
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: berichte-rauchtest
+          path: target/smoke-report.html
+          retention-days: 7
