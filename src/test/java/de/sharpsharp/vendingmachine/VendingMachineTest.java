@@ -58,4 +58,12 @@ public class VendingMachineTest {
     vendingMachine.selectDrink(Drink.COLA);
     assertThat(vendingMachine.message(), is("Zu wenig Geld"));
   }
+
+  @Test
+  public void cancelReturnsAllCreditAsChange() {
+    vendingMachine.insertCoin(200);
+    vendingMachine.cancel();
+    assertThat(vendingMachine.credit(), is(0));
+    assertThat(vendingMachine.coinReturn().stream().mapToInt(Integer::intValue).sum(), is(200));
+  }
 }

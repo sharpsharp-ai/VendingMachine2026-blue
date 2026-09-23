@@ -6,19 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * The machine. So far it does nothing: every action is ignored, and what it reports is the
- * state right after switching it on. The rules in the README are still to be built.
- * <p>
- * Amounts are in cents, messages are plain text. The methods are synchronized because the
- * web page may send several requests at once, while there is one machine and one customer at a time.
+ * The machine. Amounts are in cents, messages are plain text. The methods are
+ * synchronized because the web page may send several requests at once, while
+ * there is one machine and one customer at a time.
  */
 public class VendingMachine {
 
     public static final int CANS_PER_SLOT = 5;
 
-  private final List<Drink> drinksInOutputTray = new ArrayList<>();
+    private final List<Drink> drinksInOutputTray = new ArrayList<>();
+    private final List<Integer> coinsInserted = new ArrayList<>();
+    private final List<Integer> coinReturnInternal = new ArrayList<>();
     private final Map<Drink, Integer> stock = new EnumMap<>(Drink.class);
-    private int credit = 0;
     private String message = "Bitte Münzen einwerfen";
 
     /** The time of day, for rules that depend on it. Never read the system time directly: ask the clock. */
@@ -34,44 +33,53 @@ public class VendingMachine {
     // ---- What a customer can do --------------------------------------------
 
     public synchronized void insertCoin(int cents) {
-        credit += cents;
+        coinsInserted.add(cents);
     }
 
     public synchronized void selectDrink(Drink drink) {
-      int price = drink.price();
-      if (credit < price) {
-        message = "Zu wenig Geld";
-        return;
-      }
+        int price = drink.price();
+        if (currentCredit() < price) {
+            message = "Zu wenig Geld";
+            return;
+        }
 
-      Integer remainingDrinks = stock.get(drink);
-      if (remainingDrinks == 0) {
-        return;
-      }
+        Integer remainingDrinks = stock.get(drink);
+        if (remainingDrinks == 0) {
+            return;
+        }
 
-      credit -= price;
-      drinksInOutputTray.add(drink);
-      stock.put(drink, remainingDrinks - 1);
+        deduct(price);
+        drinksInOutputTray.add(drink);
+        stock.put(drink, remainingDrinks - 1);
     }
 
     public synchronized void cancel() {
+        if (!coinsInserted.isEmpty()) {
+            coinReturnInternal.addAll(coinsInserted);
+            coinsInserted.clear();
+            message = "Bitte Wechselgeld nehmen";
+        }
     }
 
     /** Empties the output tray and returns the cans that were in it. */
     public synchronized List<Drink> takeDrinks() {
-        return List.of();
+        List<Drink> drinks = List.copyOf(drinksInOutputTray);
+        drinksInOutputTray.clear();
+        return drinks;
     }
 
     /** Empties the coin return and returns the coins that were in it, in cents. */
     public synchronized List<Integer> takeCoins() {
-        return List.of();
+        List<Integer> coins = List.copyOf(coinReturnInternal);
+        coinReturnInternal.clear();
+        return coins;
     }
 
     // ---- What the machine shows ---------------------------------------------
 
-    /** In cents. */
+    /** Sum of all coins still in the machine, in cents. */
     public synchronized int credit() {
-        return credit;
+        return currentCredit();
     }
 
     public synchronized String message() {
@@ -89,16 +97,34 @@ public class VendingMachine {
 
     /** The price shown behind the name of the drink, in cents. Null: the machine knows no price yet. */
     public synchronized Integer price(Drink drink) {
-      return drink.price();
+        return drink.price();
     }
 
     /** The cans that dropped out and have not been taken yet. */
     public synchronized List<Drink> outputTray() {
-      return drinksInOutputTray;
+        return drinksInOutputTray;
     }
 
     /** The coins that came back and have not been taken yet, in cents. */
     public synchronized List<Integer> coinReturn() {
-        return List.of();
+        return coinReturnInternal;
+    }
+
+    // ---- Internal helpers ---------------------------------------------------
+
+    private int currentCredit() {
+        return coinsInserted.stream().mapToInt(Integer::intValue).sum();
+    }
+
+    private void deduct(int amount) {
+        while (amount > 0 && !coinsInserted.isEmpty()) {
+            int coin = coinsInserted.remove(0);
+            if (coin > amount) {
+                coinsInserted.add(0, coin - amount);
+                amount = 0;
+            } else {
+                amount -= coin;
+            }
+        }
     }
 }
