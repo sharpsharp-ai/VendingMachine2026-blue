@@ -1,7 +1,9 @@
 package de.sharpsharp.vendingmachine;
 
+import io.cucumber.java.PendingException;
 import io.cucumber.java.de.Angenommen;
 import io.cucumber.java.de.Dann;
+import io.cucumber.java.de.Und;
 import io.cucumber.java.de.Wenn;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -61,5 +63,15 @@ public class VendingMachineSteps {
   @Dann("der Automat meldet {string}")
   public void displayZeigt(String string) {
     assertThat(machine.message(), is(string));
+  }
+
+  @Und("in der Münzrückgabe sind {int} Euro")
+  public void inDerMuenzrueckgabeSindEuro(int euro) {
+    assertThat(machine.coinReturn().stream().mapToInt(Integer::intValue).sum(), is(euro * CENT_TO_EURO_MULTIPLICATOR));
+  }
+
+  @Wenn("ich am Automat auf Abbruch gedrückt wird")
+  public void ichAmAutomatAufAbbruchGedrücktWird() {
+    machine.cancel();
   }
 }
