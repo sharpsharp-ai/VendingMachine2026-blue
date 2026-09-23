@@ -16,13 +16,6 @@ public class VendingMachineTest {
   }
 
   @Test
-  public void selectColaFromFilledAutomat_returnCola() {
-    vendingMachine.selectDrink(Drink.COLA);
-    List<Drink> drinks = vendingMachine.outputTray();
-    assertThat(drinks.size(), is(1));
-  }
-
-  @Test
   public void getPriceFromBeer_returnPrice() {
     Integer price = vendingMachine.price(Drink.BEER);
     assertThat(price, is(200));
@@ -51,5 +44,18 @@ public class VendingMachineTest {
     vendingMachine.insertCoin(200);
     vendingMachine.insertCoin(50);
     assertThat(vendingMachine.credit(), is(350));
+  }
+
+  @Test
+  public void selectColaWithEnoughCreditDeductsPrice() {
+    vendingMachine.insertCoin(200);
+    vendingMachine.selectDrink(Drink.COLA);
+    assertThat(vendingMachine.credit(), is(100));
+  }
+
+  @Test
+  public void selectColaWithNoCreditShowsTooLittleMoney() {
+    vendingMachine.selectDrink(Drink.COLA);
+    assertThat(vendingMachine.message(), is("Zu wenig Geld"));
   }
 }

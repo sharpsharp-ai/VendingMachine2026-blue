@@ -19,6 +19,7 @@ public class VendingMachine {
   private final List<Drink> drinksInOutputTray = new ArrayList<>();
     private final Map<Drink, Integer> stock = new EnumMap<>(Drink.class);
     private int credit = 0;
+    private String message = "Bitte Münzen einwerfen";
 
     /** The time of day, for rules that depend on it. Never read the system time directly: ask the clock. */
     private final Clock clock;
@@ -37,11 +38,18 @@ public class VendingMachine {
     }
 
     public synchronized void selectDrink(Drink drink) {
+      int price = drink.price();
+      if (credit < price) {
+        message = "Zu wenig Geld";
+        return;
+      }
+
       Integer remainingDrinks = stock.get(drink);
       if (remainingDrinks == 0) {
         return;
       }
 
+      credit -= price;
       drinksInOutputTray.add(drink);
       stock.put(drink, remainingDrinks - 1);
     }
@@ -67,7 +75,7 @@ public class VendingMachine {
     }
 
     public synchronized String message() {
-        return "Bitte Münzen einwerfen";
+        return message;
     }
 
     /** True while the display shows a refusal such as "Ausverkauft"; the page then flashes it red. */

@@ -1,5 +1,6 @@
 # language: de
 Funktionalität: Guthaben anzeigen
+  Nach dem Geldeinwurf wird ein Guthaben angezeigt.
 
   Szenario:
     Angenommen der Automat ist frisch gestartet
