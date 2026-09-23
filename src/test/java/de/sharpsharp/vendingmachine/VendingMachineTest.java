@@ -27,4 +27,29 @@ public class VendingMachineTest {
     Integer price = vendingMachine.price(Drink.BEER);
     assertThat(price, is(200));
   }
+
+  @Test
+  public void freshMachineHasZeroCredit() {
+    assertThat(vendingMachine.credit(), is(0));
+  }
+
+  @Test
+  public void insert100CentsIncreasesCreditBy100() {
+    vendingMachine.insertCoin(100);
+    assertThat(vendingMachine.credit(), is(100));
+  }
+
+  @Test
+  public void insert2EuroIncreasesCreditTo200Cents() {
+    vendingMachine.insertCoin(200);
+    assertThat(vendingMachine.credit(), is(200));
+  }
+
+  @Test
+  public void insertMultipleCoinsSumsCredit() {
+    vendingMachine.insertCoin(100);
+    vendingMachine.insertCoin(200);
+    vendingMachine.insertCoin(50);
+    assertThat(vendingMachine.credit(), is(350));
+  }
 }
