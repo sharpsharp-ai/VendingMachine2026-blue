@@ -1,0 +1,45 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "question": "deny",
+    "webfetch": "deny",
+    "websearch": "deny",
+    "external_directory": "deny",
+    "doom_loop": "deny",
+    "edit": "allow",
+    "bash": {
+      "*": "deny",
+      "mvn *": "allow",
+      "mvn *skipTests*": "deny",
+      "mvn *maven.test.skip*": "deny",
+      "scripts/steps-glossar.sh*": "allow",
+      "./scripts/steps-glossar.sh*": "allow",
+      "bash scripts/steps-glossar.sh*": "allow",
+      "sh scripts/steps-glossar.sh*": "allow",
+      "ls*": "allow",
+      "pwd": "allow",
+      "cat *": "allow",
+      "head *": "allow",
+      "tail *": "allow",
+      "wc *": "allow",
+      "grep *": "allow",
+      "rg *": "allow",
+      "find *": "allow",
+      "mkdir *": "allow",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git show*": "allow"
+    }
+  },
+  "agent": {
+    "reviewer": {
+      "description": "Liest nur. Nennt Befunde mit Datei:Zeile, Smell und Refactoring-Vorschlag.",
+      "mode": "primary",
+      "steps": 15,
+      "permission": {
+        "edit": "deny"
+      }
+    }
+  }
+}

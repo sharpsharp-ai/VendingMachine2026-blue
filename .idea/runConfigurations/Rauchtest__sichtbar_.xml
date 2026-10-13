@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Rauchtest (sichtbar)" type="JUnit" factoryName="JUnit">
+    <module name="getraenkeautomat" />
+    <option name="PACKAGE_NAME" value="de.sharpsharp.vendingmachine.smoke" />
+    <option name="MAIN_CLASS_NAME" value="de.sharpsharp.vendingmachine.smoke.RunSmokeTest" />
+    <option name="METHOD_NAME" value="" />
+    <option name="TEST_OBJECT" value="class" />
+    <option name="VM_PARAMETERS" value="-Dsmoke.headed=true" />
+    <envs>
+      <env name="SE_SKIP_DRIVER_IN_PATH" value="true" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
