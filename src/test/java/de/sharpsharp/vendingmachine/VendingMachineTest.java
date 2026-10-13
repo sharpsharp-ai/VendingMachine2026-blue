@@ -2,7 +2,9 @@ package de.sharpsharp.vendingmachine;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static de.sharpsharp.vendingmachine.Drink.COLA;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class VendingMachineTest {
 
@@ -10,8 +12,15 @@ public class VendingMachineTest {
   public void addColaToOutputTray() {
     VendingMachine machine = new VendingMachine(null);
 
-    machine.selectDrink(Drink.COLA);
+    machine.selectDrink(COLA);
 
-    assertEquals(1, machine.outputTray().size());
+    assertThat(machine.outputTray().size(), is(1));
+  }
+
+  @Test
+  public void showPriceOfDrink() {
+    VendingMachine machine = new VendingMachine(null);
+
+    assertThat(machine.price(COLA), is(COLA.getPrice()));
   }
 }
