@@ -17,6 +17,7 @@ public class VendingMachine {
   public static final int CANS_PER_SLOT = 5;
 
   private ArrayList<Drink> outputTray;
+  private int credit = 0;
 
   private final Map<Drink, Integer> stock = new EnumMap<>(Drink.class);
   /**
@@ -36,6 +37,7 @@ public class VendingMachine {
   // ---- What a customer can do --------------------------------------------
 
   public synchronized void insertCoin(int cents) {
+    this.credit += cents;
   }
 
   public synchronized void selectDrink(Drink drink) {
@@ -65,7 +67,7 @@ public class VendingMachine {
    * In cents.
    */
   public synchronized int credit() {
-    return 0;
+    return credit;
   }
 
   public synchronized String message() {

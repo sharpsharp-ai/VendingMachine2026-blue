@@ -36,4 +36,14 @@ public class VendingMachineSteps {
   public void showPriceOfDrink(Drink drink) {
     assertThat(machine.price(drink), is(drink.getPriceInCents()));
   }
+
+  @Wenn("{betrag} wird eingeworfen")
+  public void coinsAreInserted(Integer betrag) {
+    machine.insertCoin(betrag);
+  }
+
+  @Dann("Guthaben von {betrag} wird angezeigt")
+  public void showBalance(Integer betrag) {
+    assertThat(machine.credit(), is(betrag));
+  }
 }

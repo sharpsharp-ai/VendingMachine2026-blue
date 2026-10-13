@@ -23,4 +23,14 @@ public class VendingMachineTest {
 
     assertThat(machine.price(COLA), is(COLA.getPriceInCents()));
   }
+
+  @Test
+  public void moneyIsInserted_balanceIsAdjusted() {
+    VendingMachine machine = new VendingMachine(null);
+
+    machine.insertCoin(100);
+
+    assertThat(machine.credit(), is(100));
+  }
+
 }
