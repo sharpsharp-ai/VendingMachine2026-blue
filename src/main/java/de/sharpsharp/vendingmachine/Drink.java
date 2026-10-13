@@ -4,17 +4,17 @@ package de.sharpsharp.vendingmachine;
  * The four slots of the machine, one drink per slot, in their order on the front.
  */
 public enum Drink {
-  COLA("Cola", 1),
-  ORANGE("Orange", 1),
-  LEMON("Zitrone", 1),
-  BEER("Bier", 1);
+  COLA("Cola", 100),
+  ORANGE("Orange", 100),
+  LEMON("Zitrone", 100),
+  BEER("Bier", 100);
 
   private final String displayName;
-  private final Integer price;
+  private final Integer priceInCents;
 
-  Drink(String displayName, Integer price) {
+  Drink(String displayName, Integer priceInCents) {
     this.displayName = displayName;
-    this.price = price;
+    this.priceInCents = priceInCents;
   }
 
   /**
@@ -24,7 +24,7 @@ public enum Drink {
     return displayName;
   }
 
-  public Integer getPrice() {
-    return price;
+  public Integer getPriceInCents() {
+    return priceInCents;
   }
 }

@@ -87,7 +87,7 @@ public class VendingMachine {
    * The price shown behind the name of the drink, in cents. Null: the machine knows no price yet.
    */
   public synchronized Integer price(Drink drink) {
-    return drink.getPrice();
+    return drink.getPriceInCents();
   }
 
   /**

@@ -21,6 +21,6 @@ public class VendingMachineTest {
   public void showPriceOfDrink() {
     VendingMachine machine = new VendingMachine(null);
 
-    assertThat(machine.price(COLA), is(COLA.getPrice()));
+    assertThat(machine.price(COLA), is(COLA.getPriceInCents()));
   }
 }

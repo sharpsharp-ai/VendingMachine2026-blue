@@ -34,6 +34,6 @@ public class VendingMachineSteps {
 
   @Dann("Preis für {drink} angezeigt")
   public void showPriceOfDrink(Drink drink) {
-    assertThat(machine.price(drink), is(drink.getPrice()));
+    assertThat(machine.price(drink), is(drink.getPriceInCents()));
   }
 }
