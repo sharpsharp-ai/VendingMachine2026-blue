@@ -18,6 +18,7 @@ public class VendingMachine {
 
   private ArrayList<Drink> outputTray;
   private int credit = 0;
+  private String displayMessage;
 
   private final Map<Drink, Integer> stock = new EnumMap<>(Drink.class);
   /**
@@ -38,9 +39,15 @@ public class VendingMachine {
 
   public synchronized void insertCoin(int cents) {
     this.credit += cents;
+    this.displayMessage = null;
   }
 
   public synchronized void selectDrink(Drink drink) {
+    if (credit < drink.getPriceInCents()) {
+      this.displayMessage = "\"zu wenig Geld\"";
+      return;
+    }
+    this.credit -= drink.getPriceInCents();
     outputTray.add(drink);
   }
 
@@ -71,6 +78,9 @@ public class VendingMachine {
   }
 
   public synchronized String message() {
+    if (displayMessage != null) {
+      return displayMessage;
+    }
     return "Bitte Münzen einwerfen";
   }
 

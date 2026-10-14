@@ -46,4 +46,10 @@ public class VendingMachineSteps {
   public void showBalance(Integer betrag) {
     assertThat(machine.credit(), is(betrag));
   }
+
+  @Dann("zeigt der Automat {} an")
+  public void showText(String text) {
+    assertThat(machine.message(), is(text));
+  }
+
 }
