@@ -15,5 +15,5 @@ Szenario: Bier wird nach 16:00 Uhr gekauft und wird eine Dose Bier ausgeworfen u
   Und es ist 16:00 Uhr
   Wenn 2 € wird eingeworfen
   Und ich Bier wähle
-  Dann Guthaben von 1 € wird angezeigt
+  Dann Guthaben von 0 € wird angezeigt
   Und liegt eine Dose Bier im Ausgabefach

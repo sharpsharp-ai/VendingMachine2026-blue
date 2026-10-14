@@ -82,7 +82,7 @@ public class VendingMachineTest {
     machine.selectDrink(BEER);
 
     assertThat(machine.outputTray().size(), is(1));
-    assertThat(machine.credit(), is(100));
+    assertThat(machine.credit(), is(0));
   }
 
 }
