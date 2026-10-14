@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalTime;
 
 /**
  * The machine. So far it does nothing: every action is ignored, and what it reports is the
@@ -43,8 +44,12 @@ public class VendingMachine {
   }
 
   public synchronized void selectDrink(Drink drink) {
+    if (drink == Drink.BEER && clock.now().isBefore(LocalTime.of(16, 0))) {
+      this.displayMessage = "Kein Bier vor 4";
+      return;
+    }
     if (credit < drink.getPriceInCents()) {
-      this.displayMessage = "\"zu wenig Geld\"";
+      this.displayMessage = "zu wenig Geld";
       return;
     }
     this.credit -= drink.getPriceInCents();

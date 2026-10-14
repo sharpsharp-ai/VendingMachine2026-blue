@@ -1,5 +1,9 @@
 package de.sharpsharp.vendingmachine;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 import io.cucumber.java.de.Angenommen;
 import io.cucumber.java.de.Dann;
 import io.cucumber.java.de.Wenn;
@@ -50,6 +54,12 @@ public class VendingMachineSteps {
   @Dann("zeigt der Automat {} an")
   public void showText(String text) {
     assertThat(machine.message(), is(text));
+  }
+
+  @Angenommen("es ist {} Uhr")
+  public void setTime(String time) {
+    String[] timeStrings = time.split(":");
+     clock.set(LocalTime.of(Integer.parseInt(timeStrings[0]),Integer.parseInt(timeStrings[1])));
   }
 
 }
