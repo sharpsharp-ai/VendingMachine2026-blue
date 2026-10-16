@@ -62,4 +62,19 @@ public class VendingMachineSteps {
      clock.set(LocalTime.of(Integer.parseInt(timeStrings[0]),Integer.parseInt(timeStrings[1])));
   }
 
+  @Angenommen("das Ausgabefach ist mit 3 Dosen gefüllt")
+  public void fillOutputTrayWithThreeDrinks() {
+    machine.insertCoin(100);
+    machine.selectDrink(Drink.COLA);
+    machine.insertCoin(100);
+    machine.selectDrink(Drink.ORANGE);
+    machine.insertCoin(100);
+    machine.selectDrink(Drink.LEMON);
+  }
+
+  @Wenn("das Ausgabefach wird geleert")
+  public void emptyTheOutputTray() {
+    machine.takeDrinks();
+  }
+
 }

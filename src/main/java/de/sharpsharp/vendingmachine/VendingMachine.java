@@ -16,6 +16,7 @@ import java.time.LocalTime;
 public class VendingMachine {
 
   public static final int CANS_PER_SLOT = 5;
+  private static final int OUTPUT_TRAY_CAPACITY = 3;
 
   private ArrayList<Drink> outputTray;
   private int credit = 0;
@@ -44,6 +45,10 @@ public class VendingMachine {
   }
 
   public synchronized void selectDrink(Drink drink) {
+    if (outputTray.size() >= OUTPUT_TRAY_CAPACITY) {
+      this.displayMessage = "Bitte Ausgabefach leeren";
+      return;
+    }
     if (drink == Drink.BEER && clock.now().isBefore(LocalTime.of(16, 0))) {
       this.displayMessage = "Kein Bier vor 4";
       return;
@@ -63,7 +68,9 @@ public class VendingMachine {
    * Empties the output tray and returns the cans that were in it.
    */
   public synchronized List<Drink> takeDrinks() {
-    return List.of();
+    List<Drink> drinks = new ArrayList<>(outputTray);
+    outputTray.clear();
+    return drinks;
   }
 
   /**
@@ -93,7 +100,7 @@ public class VendingMachine {
    * True while the display shows a refusal such as "Ausverkauft"; the page then flashes it red.
    */
   public synchronized boolean refused() {
-    return false;
+    return outputTray.size() >= OUTPUT_TRAY_CAPACITY;
   }
 
   public synchronized int stock(Drink drink) {
